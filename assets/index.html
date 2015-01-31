@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Keybored</title>
+</head>
+<body>
+<textarea id="mainarea"></textarea>
+<script>
+var area;
+var lastText = "";
+
+function send(c) {
+	var r = new XMLHttpRequest();
+	r.open("GET", "/keypress?k=" + encodeURIComponent(c), "true");
+	r.send();
+}
+
+function keyHandler(e) {
+	var newtext = area.value;
+	if (newtext.length < lastText.length) {
+		for (var i = 0; i < (lastText.length - newtext.length); i++) send("\u0008");
+	} else {
+		var newchars = newtext.substring(lastText.length, newtext.length);
+		for (var i = 0; i < newchars.length; i++) {
+			send(newchars.charAt(i));
+		}
+	}
+	lastText = newtext;
+}
+area = document.getElementById("mainarea");
+area.value = "";
+area.oninput = keyHandler;
+area.focus();
+</script>
+</body>
+</html>
